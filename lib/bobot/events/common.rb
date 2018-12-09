@@ -9,11 +9,11 @@ module Bobot
       end
 
       def sender
-        @messaging['sender']
+        self.is_echo ? @messaging['recipient'] : @messaging['sender']
       end
 
       def recipient
-        @messaging['recipient']
+        self.is_echo ? @messaging['sender'] : @messaging['recipient']
       end
 
       # If the user responds to your message, the appropriate event
@@ -86,8 +86,22 @@ module Bobot
       end
       alias_method :reply_with_carousel, :reply_with_generic
 
+      def send_take_thread_control(metadata: nil)
+        page.deliver_take_thread_control(to: sender["id"], metadata: metadata)
+      end
+
+      def send_pass_thread_control(target_app_id:, metadata: nil)
+        page.deliver_pass_thread_control(to: sender["id"], "target_app_id": target_app_id, metadata: metadata)
+      end
+
       def page
-        Bobot::Page.find(recipient["id"])
+        self.is_echo ? Bobot::Page.find(sender["id"]) : Bobot::Page.find(recipient["id"])
+      end
+
+      def is_echo
+        if @messaging["message"]
+          @messaging["message"]["is_echo"] ? true : false
+        end
       end
     end
   end

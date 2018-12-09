@@ -525,5 +525,25 @@ module Bobot
         query: { access_token: page_access_token, fields: %w[home_url] },
       )
     end
+
+    def deliver_take_thread_control(to:, metadata: nil )
+      body = { recipient: { id: to }, metadata: metadata  }
+      query = { access_token: page_access_token }
+      Bobot::Commander.deliver(
+          body: body,
+          query: query,
+          action:  '/me/take_thread_control'
+      )
+    end
+
+    def deliver_pass_thread_control(to:, metadata: nil , target_app_id:)
+      body = { recipient: { id: to }, target_app_id: target_app_id, metadata: metadata }
+      query = { access_token: page_access_token }
+      Bobot::Commander.deliver(
+          body: body,
+          query: query,
+          action:  '/me/pass_thread_control'
+      )
+    end
   end
 end

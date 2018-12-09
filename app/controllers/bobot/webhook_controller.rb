@@ -84,6 +84,11 @@ module Bobot
         entry['messaging'.freeze].to_a.each do |messaging|
           Bobot::Commander.receive(messaging)
         end
+        entry['standby'.freeze].to_a.each do |standby|
+          if standby["message"]
+            Bobot::Commander.receive(standby)
+          end
+        end
       end
     end
   end
